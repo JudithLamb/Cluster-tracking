@@ -62,9 +62,9 @@ server <- function(input, output, session) {
     showNotification("Incorrect age range selected", duration = NULL, id = "ntf", type = "error")
   }else{
     removeNotification("ntf")
-    all_data <- read.csv(paste0("../Data/alluvial_", input$age1, ".", input$age2, "_t" , input$size, ".csv"), sep = ";", header = TRUE, check.names = FALSE)
+    all_data <- read.csv(paste0("Data/alluvial_", input$age1, ".", input$age2, "_t" , input$size, ".csv"), sep = ";", header = TRUE, check.names = FALSE)
     value$all <- parcats(alluvial_wide(all_data), marginal_histograms = FALSE, hoverinfo = "count")
-    value$traj <- read.csv(paste0("../Data/traj_clust_", input$age1, ".", input$age2, "_t" , input$size, ".txt"), header = FALSE)
+    value$traj <- read.csv(paste0("Data/traj_clust_", input$age1, ".", input$age2, "_t" , input$size, ".txt"), header = FALSE)
   }
   })
   
