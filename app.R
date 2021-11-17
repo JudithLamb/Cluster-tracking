@@ -1,9 +1,21 @@
-library(shiny)
+#############
+# Libraries #
+#############
+
+if(!requireNamespace("easyalluvial", quietly = TRUE)) install.packages("easyalluvial")
+if(!requireNamespace("DiagrammeR", quietly = TRUE)) install.packages("DiagrammeR")
+if(!requireNamespace("parcats", quietly = TRUE)) install.packages("parcats")
+
 library(easyalluvial)
 library(DiagrammeR)
 library(parcats)
 
-#User Interface of Shiny
+
+
+###########################
+# User Interface of Shiny #
+###########################
+
 ui <- fluidPage(
   
   # App title
@@ -38,7 +50,12 @@ ui <- fluidPage(
   )
 )
 
-#Server function of Shiny
+
+
+############################
+# Server function of Shiny #
+############################
+
 server <- function(input, output, session) {
   
   value <- reactiveValues()
