@@ -1,5 +1,7 @@
 library(shiny)
 library(easyalluvial)
+library(DiagrammeR)
+library(parcats)
 
 #User Interface of Shiny
 ui <- fluidPage(
