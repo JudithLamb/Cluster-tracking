@@ -7,7 +7,7 @@ tracked over ages to define cluster-trajectories. We applied our approaches to t
 We started by constructing a patient network for each age considered. We then applied the MCL clustering algorithm on each network.
 
 ### Constructing patient networks
-A patient network is a graph $G = (V,E)$ with $V$ patient nodes and $E$ edges representing interactions between patient nodes. We built a network for each patient age. Each network is constructed using a similarity matrix. In this similarity matrix, we computed the similarity between patients using the Cosine similarity. 
+A patient network is a graph $G = (V,E)$ with $V$ patient nodes and $E$ edges representing interactions between patient nodes. We built a network for each patient age. Each network is constructed using a similarity matrix. In this similarity matrix, we computed the similarity between patients of the same age using the Cosine similarity.
 
 ```python
 import pandas as pd
@@ -25,3 +25,6 @@ for i in np.arange(60,71):
     #Saving
     cos_DF.to_parquet(("Data/cosine_%d.gzip" %(i)), compression="gzip") 
 ```
+
+
+![example visualization](Figure/cosine_threshold.png)
