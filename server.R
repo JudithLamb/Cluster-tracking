@@ -62,15 +62,13 @@ server <- function(input, output, session) {
   
   #Update of age range upper limit
   observeEvent(input$age1, {if(input$age1!="from"){
-    updateSelectInput(session, "age1", choices = c(seq(40,60,10)) , selected = input$age1)
-    updateSelectInput(session, "age2", choices = c(seq(50,70,10)) , selected = as.numeric(input$age1)+10)
+    updateSelectInput(session, "age2", choices = c(seq(50,70,10)), selected = as.numeric(input$age1)+10)
   }
   })
   
   #Update of age range lower limit
   observeEvent(input$age2, {if(input$age2!="to"){
-    updateSelectInput(session, "age2", choices = c(seq(50,70,10)) , selected = input$age2)
-    updateSelectInput(session, "age1", choices = c(seq(40,60,10)) , selected = as.numeric(input$age2)-10)
+    updateSelectInput(session, "age1", choices = c(seq(40,60,10)), selected = as.numeric(input$age2)-10)
   }
   })
   
