@@ -11,7 +11,7 @@ A patient network is a graph $G = (V,E)$ with $V$ patient nodes and $E$ edges re
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 
-#Construction of similarity matrices from 60 to 70 years old
+# Construction of similarity matrices from 60 to 70 years old
 for i in np.arange(60,71):
     #Table of prescriptions at age i
     pres_tab = pd.read_csv(("Data/pres_%d.csv" %(i)), sep = ";")
@@ -24,8 +24,11 @@ for i in np.arange(60,71):
     cos_DF.to_parquet(("Data/cosine_%d.gzip" %(i)), compression="gzip") 
 ```
 
-We then filtered the similaritry matrices according to a threshold. This threshold is chosen over all the matrices in order to reduce the number of edges in the networks while obtaining a minimum number of isolated patient.
+We then filtered the similaritry matrices according to a threshold. This threshold is chosen over all the matrices in order to reduce the number of edges in the networks while obtaining a minimum number of isolated patients. From the matrices constructed with the simulated sample, we choose a threshold of 0.7 because this is where we observe the fastest decrease in the number of edges and there is only a small number of isolated patients (see figure below). 
 
 ![example visualization](Figure/cosine_threshold.png)
 
-With the simulated patient, we chose 
+From each filtered matrix, we obtain a patient network in which patients are connected only if they have a cosine similarity $\ge 0.7$. The patient network at 60 years of age is represented in the figure below.
+
+### Identifying clusters of patients from raw data
+
