@@ -28,7 +28,9 @@ We then filtered the similaritry matrices according to a threshold. This thresho
 
 ![example visualization](Figure/cosine_threshold.png)
 
-From each filtered matrix, we obtain a patient network in which patients are connected only if they have a cosine similarity $\ge 0.7$. The patient network at 60 years of age is represented in the figure below.
+From each filtered matrix, we obtain a patient network in which patients are connected only if they have a Cosine similarity $\ge 0.7$. The patient network at 60 years of age is represented in the figure below.
+
+![example visualization](Figure/network_60.png)
 
 ### Identifying clusters of patients from raw data
 
