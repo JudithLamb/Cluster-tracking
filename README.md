@@ -11,17 +11,18 @@ A patient network is a graph $G = (V,E)$ with $V$ patient nodes and $E$ edges re
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 
-# Construction of similarity matrices from 60 to 70 years old
-for i in np.arange(60,71):
-    #Table of prescriptions at age i
-    pres_tab = pd.read_csv(("Data/pres_%d.csv" %(i)), sep = ";")
-    
-    #Computation of the Cosine similarity between patients 
-    cos_DF = pd.DataFrame(cosine_similarity(pres_tab), columns = pres_tab.index.astype("str"),
-                          index = pres_tab.index.astype("str")) 
-    
-    #Saving
-    cos_DF.to_parquet(("Data/cosine_%d.gzip" %(i)), compression="gzip") 
+#Construction of the similarity matrix at age 60
+
+#Table of prescriptions at age 60
+pres_tab = pd.read_csv("Data/pres_60.csv", sep = ";")
+
+#Computation of the Cosine similarity between patients 
+cos_DF = pd.DataFrame(cosine_similarity(pres_tab),
+                      columns = pres_tab.index.astype("str"),
+                      index = pres_tab.index.astype("str")) 
+
+#Saving
+cos_DF.to_parquet("Data/cosine_60.gzip", compression="gzip")  
 ```
 
 We then filtered the similaritry matrices according to a threshold. This threshold is chosen over all the matrices in order to reduce the number of edges in the networks while obtaining a minimum number of isolated patients. From the matrices constructed with the simulated sample, we choose a threshold of 0.7 because this is where we observe the fastest decrease in the number of edges and there is only a small number of isolated patients (see figure below). 
@@ -32,5 +33,53 @@ From each filtered matrix, we obtain a patient network in which patients are con
 
 ![example visualization](Figure/network_60.png)
 
-### Identifying clusters of patients from raw data
+### Clustering patient networks
+We applied the Markov Cluster algorithm (MCL) on the largest connected component of each patient network constructed.
+
+```python
+import pandas as pd
+import numpy as np
+import networkx as nx
+import markov_clustering as mc
+
+#Similarity matrix at age 60
+cos_tab = pd.read_parquet("Data/cosine_60.gzip")
+cos_tab.values[[np.arange(cos_tab.shape[0])]*2] = 0 #We set the diagonal of the matrix to 0
+cos_tab.mask(cos_tab<0.7, 0, inplace=True) #We filtered the matrix with the chosen Cosine similarity threshold = 0.7
+
+#Network construction
+G = nx.from_pandas_adjacency(cos_tab)
+
+#Component extraction
+Gcc1 = sorted(nx.connected_components(G), key = len, reverse = True)[0] #The largest connected component
+Gcc2 = sorted(nx.connected_components(G), key = len, reverse = True)[1:] #The other connected components
+
+#Largest connected component network
+G = G.subgraph(Gcc1) 
+
+#Exctraction of clusters from MCL algorithm applied on the largest connected component network
+mat = nx.to_scipy_sparse_matrix(G)
+mcl = mc.run_mcl(mat) 
+clust = mc.get_clusters(mcl) #list of identified clusters
+pat = list(G.nodes()) #Patient IDs
+res = []
+for y in np.arange(len(clust)):
+    for j in clust[y] :
+        res.append([pat[j], y+1]) #Patient ids + cluster they belong to
+
+#Extraction of clusters from the other connected components: each connected component represent a cluster
+y = y+2 #next cluster
+if len(Gcc2)!=0:
+    for g in Gcc2:
+        for pat in g:
+            res.append([pat, y]) #Patient ids + cluster they belong to
+        y = y+1
+
+clust_data = pd.DataFrame(res, columns=['Patient', 'cluster'])
+
+#Saving
+clust_data.to_csv("Data/clusters_60.csv", sep = ";", index = False)
+```
+
+## Identifying clusters of patients from raw data
 
