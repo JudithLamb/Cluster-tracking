@@ -2,7 +2,7 @@
 We propose novel approaches based on cluster-tracking for clustering patients from longitudinal data extracted from medico-administrative databases. These approaches start by identifying clusters of patients at each considered age. To this goal, we used two different clustering strategies: Markov Cluster algorithm (MCL) applied on patient networks built from raw data and Kmeans applied directly on raw data. Clusters are then tracked over ages to define cluster-trajectories. We applied our approaches to the analysis of antithrombotic drug prescriptions extracted from the Echantillon Généraliste des Bénéficiaires (EGB, a French cohort) between 2008 and 2018 in patients aged from 60 to 70 years old. From this data, we simulated 5594 patients with their drug prescriptions. This simulated sample is used in the following to apply our two cluster-tracking approaches.
 
 ## Identifying clusters of patients from patient networks
-We started by constructing a patient network for each age considered. We then applied the MCL clustering algorithm on each network.
+The first clustering strategy used to identify clusters of patients relies on the construction of patient networks. We started by constructing a patient network for each age considered. We then applied the MCL clustering algorithm on each network.
 
 ### Constructing patient networks
 A patient network is a graph $G = (V,E)$ with $V$ patient nodes and $E$ edges representing interactions between patient nodes. We built a network for each patient age. Each network is constructed using a similarity matrix. In this similarity matrix, we computed the similarity between patients of the same age using the Cosine similarity.
@@ -29,7 +29,7 @@ We then filtered the similaritry matrices according to a threshold. This thresho
 
 ![example visualization](Figure/cosine_threshold.png)
 
-From each filtered matrix, we obtain a patient network in which patients are connected only if they have a Cosine similarity $\ge 0.7$. The patient network at 60 years of age is represented in the figure below.
+From each filtered matrix, we obtained a patient network in which patients are connected only if they have a Cosine similarity $\ge 0.7$. The patient network at 60 years of age is represented in the figure below.
 
 ![example visualization](Figure/network_60.png)
 
@@ -82,4 +82,5 @@ clust_data.to_csv("Data/clusters_60.csv", sep = ";", index = False)
 ```
 
 ## Identifying clusters of patients from raw data
+The second clustering strategy used to identify clusters of patients relies on raw data. We used Kmeans that we applied directly on raw data, for each patient age. As in Kmeans the umber of clusters must be specified a \textit{priori}, we determined the optimal number of clusters per age by calculating the silhouette score. 
 
