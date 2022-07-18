@@ -21,7 +21,7 @@ cos_DF = pd.DataFrame(cosine_similarity(pres_tab),
                       columns = pres_tab.index.astype("str"),
                       index = pres_tab.index.astype("str")) 
 
-#Saving
+#Save
 cos_DF.to_parquet("Data/cosine_60.gzip", compression="gzip")  
 ```
 
@@ -77,7 +77,7 @@ if len(Gcc2)!=0:
 
 clust_data = pd.DataFrame(res, columns=['Patient', 'cluster'])
 
-#Saving
+#Save
 clust_data.to_csv("Data/clusters_net_60.csv", sep = ";", index = False)
 ```
 
@@ -86,6 +86,24 @@ The second clustering strategy used to identify clusters of patients relies on r
 
 ![example visualization](Figure/silhouette_raw.png)
 
-```python
+We can therefore apply Kmeans at each age with the optimal number of clusters identified.
 
+```python
+import pandas as pd
+from sklearn.cluster import KMeans
+
+#Table of prescriptions at age 60
+pres_tab = pd.read_csv("Data/pres_60.csv", sep = ";")
+
+#Kmeans applied with 6 clusters, the optimal number of cluster identified at age 60
+KM = KMeans(n_clusters=6).fit(pres_tab.values)
+label = KM.labels_
+id_label = pres_tab.index
+res = []
+for j in np.arange(len(label)) :
+        res.append([id_label[j], label[j]+1]) #Patient ids + cluster they belong
+clust_data = pd.DataFrame(res, columns=['Patient', 'cluster'])
+
+#Save
+clust_data.to_csv("Data/clusters_raw_60.csv" , sep = ";", index = False)
 ```
