@@ -78,7 +78,7 @@ if len(Gcc2)!=0:
 clust_data = pd.DataFrame(res, columns=['Patient', 'cluster'])
 
 #Saving
-clust_data.to_csv("Data/clusters_60.csv", sep = ";", index = False)
+clust_data.to_csv("Data/clusters_net_60.csv", sep = ";", index = False)
 ```
 
 ## Identifying clusters of patients from raw data
