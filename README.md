@@ -86,6 +86,6 @@ The second clustering strategy used to identify clusters of patients relies on r
 
 ![example visualization](Figure/silhouette_raw.png)
 
-```R
-read.csv("cluster.csv", sep = ";", header = TRUE)
+```python
+
 ```
