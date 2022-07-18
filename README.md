@@ -82,5 +82,7 @@ clust_data.to_csv("Data/clusters_60.csv", sep = ";", index = False)
 ```
 
 ## Identifying clusters of patients from raw data
-The second clustering strategy used to identify clusters of patients relies on raw data. We used Kmeans that we applied directly on raw data, for each patient age. As in Kmeans the number of clusters must be specified *a priori*, we determined the optimal number of clusters per age by calculating the silhouette score. 
+The second clustering strategy used to identify clusters of patients relies on raw data. We used Kmeans that we applied directly on raw data, for each patient age. As in Kmeans the number of clusters must be specified *a priori*, we determined the optimal number of clusters per age by calculating the silhouette score. We varied the number of clusters from 2 to 200. The optimal number of clusters $K$ identified at each age from our simulated sample is represented in the figure below. 
 
+```python
+```
