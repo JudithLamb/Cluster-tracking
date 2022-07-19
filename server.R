@@ -10,7 +10,11 @@ library(easyalluvial)
 library(DiagrammeR)
 library(parcats)
 
-#mettre le source
+##################
+# Functions file #
+##################
+
+source("Data/functions.R")
 
 ###########################
 # User Interface of Shiny #
