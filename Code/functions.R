@@ -101,7 +101,7 @@ alluvial <- function(age, method, size){
 # Cluster-trajectories flowchart #
 ##################################
 
-flowchart <- function(age, size, method){
+flowchart <- function(age, method, size){
   
   #age ["integer vector"]: follow-up period
   #method ["character"]: clustering strategy used
