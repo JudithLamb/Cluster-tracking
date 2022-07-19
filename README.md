@@ -98,7 +98,7 @@ pres_tab = pd.read_csv("Data/pres_60.csv", sep = ";")
 #Kmeans applied with 6 clusters, the optimal number of cluster identified at age 60
 KM = KMeans(n_clusters=6).fit(pres_tab.values)
 label = KM.labels_
-id_label = pres_tab.index
+id_label = pres_tab.indexm
 res = []
 for j in np.arange(len(label)) :
         res.append([id_label[j], label[j]+1]) #Patient ids + cluster they belong
@@ -107,3 +107,8 @@ clust_data = pd.DataFrame(res, columns=['Patient', 'cluster'])
 #Save
 clust_data.to_csv("Data/clusters_raw_60.csv" , sep = ";", index = False)
 ```
+
+## Tracking clusters over ages
+We identified sets of clusters per age either from patient networks with MCL or from raw data with Kmeans. We then intend to follow the clusters over the different ages. To this goal, we computed the number of common patients between every pair of clusters obtained at 2 consecutive ages. By considering only the greatest number of common patients between all consecutive clusters, we were able to identify sets of successive clusters that we called cluster-trajectories.
+
+To visualize the tracking of clusters and the cluster-trajectories from the simulated data, we developped an R Shiny app.  
