@@ -58,18 +58,18 @@ server <- function(input, output, session) {
   value <- reactiveValues()
   
   observeEvent(input$display, {
-    All_int <- alluvial(60:70, input$method, as.numeric(input$size))
-    value$p <- parcats(alluvial_wide(All_int), marginal_histograms = FALSE, hoverinfo = "count")
-    value$T2 <- traj_simu(60:70, All_int, as.numeric(input$size), input$method)
+    allu_tab <- alluvial(60:70, input$method, as.numeric(input$size))
+    value$allu <- parcats(alluvial_wide(allu_tab), marginal_histograms = FALSE, hoverinfo = "count")
+    value$traj <- flowchart(60:70, input$method, as.numeric(input$size))
   })
   
   observeEvent(input$reset, {
     session$reload()
   })
   
-  output$Alluvial <- render_parcats(value$p)
+  output$Alluvial <- render_parcats(value$allu)
   
-  output$top2 <- renderDiagrammeR(mermaid(value$T2))
+  output$top2 <- renderDiagrammeR(mermaid(value$traj))
   
 }
 
