@@ -2,88 +2,97 @@
 # Interactive alluvial plot #
 #############################
 
-alluvial = function(method, size){
+alluvial = function(age, method, size){
   
+  #age: follow-up period 
   #method: clustering strategy used
   #size: limit size of clusters that will be displayed
   
   if(method == "Network-based"){
-    tab_method = "B01_per_age/clust_simu_B01_"
+    tab_method = "net"
   }else{
-    tab_method = "B01_per_age/clustKM_simu_B01_"
+    tab_method = "raw"
   }
   
-  #Total of patients belonging to clusters greater than or equal to 'size' 
-  pat_tot = lapply(60:70, function(x){
-    tab=read.csv(paste0(tab_method, x, ".csv"), sep = ";")
+  #Total of patients belonging to clusters >= 'size' from 60 to 70 years old 
+  pat_tot = lapply(age[1]:tail(age,1), function(x){
+    tab=read.csv(paste0("Data/clusters_", tab_method, "_", x, ".csv"), sep = ";")
     tab[tab[,2] %in% names(which(table(tab[,2])>=size)),1]})
   pat_tot = as.character(unique(unlist(pat_tot)))
   
-  #patient characteristics
-  pat = read.csv("patient_simu.csv", sep = ";", header = TRUE, colClasses = c("character", NA, NA, NA))[, c(1,3,4)] #Patient Ids + year of  birth + year of death
-  rownames(pat) = pat[,1]
-  pat = pat[pat_tot,] #Characterics of selected patients
-  
-  #we replace NA in year of death by Inf
-  pat[,3] = ifelse(is.na(pat[,3]), Inf, pat[,3])
+  #Patient characteristics
+  pat_ch = read.csv("patient_simu.csv", sep = ";", header = TRUE, colClasses = c("character", NA, NA, NA))[, c(1,3,4)] #patient Ids + year of  birth + year of death
+  rownames(pat_ch) = pat_ch[,1]
+  pat_ch = pat_ch[pat_tot,] #Characteristics of selected patients
+  pat_ch[,3] = ifelse(is.na(pat_ch[,3]), Inf, pat_ch[,3]) #replacing NA in year of death by Inf
   
   for(i in age){
-    clust_tab = read.csv(paste0(tab_method, i, ".csv"), sep = ";", colClasses = c("character", NA))
+    #Clusters identified at age i with the selected 'method'
+    clust_tab = read.csv(paste0("Data/clusters_", tab_method, "_", x, ".csv"), sep = ";", colClasses = c("character", NA))
+    
+    #Keep only clusters >= 'size'
     isolate = names(which(table(clust_tab[,2])<size))
     if(length(isolate) != 0){
       clust_tab = clust_tab[-which(clust_tab[,2] %in% isolate),]
     }
     
-    #We order name cluster from 1, the bigger cluster to the last, the smaller
-    id_ord = names(sort(table(clust_tab[,2]), decreasing = TRUE)) #cluster names ordered by size
-    clust_tab[,2] = as.character(factor(clust_tab[,2], id_ord, 1:length(id_ord))) #renaming
+    #Ranking clusters from the largest to the smallest
+    id_ord = names(sort(table(clust_tab[,2]), decreasing = TRUE))
+    clust_tab[,2] = as.character(factor(clust_tab[,2], id_ord, 1:length(id_ord)))
     
-    #We add patients clustered during the period but not during this given age = they belongs to the "0" cluster if they haven't prescription and "D" cluster if they are died
-    ex_ben = setdiff(ben_tot, clust_tab[,1])
     
-    pat_clust = pat[ex_ben,]
-    pat_clust$Y = pat_clust[,2]+i #Year of a i-th birthday
-    D_pat = pat_clust[pat_clust[,4]>pat_clust[,3],1] #patients died
-    S_pat = pat_clust[pat_clust[,4]<2008,1] #patients before the start of the follow-up
-    E_pat = setdiff(pat_clust[pat_clust[,4]>2018,1], D_pat) #patients at the end of the follow-up and not died
+    #Identifying patients with truncated data
+    tr_pat = setdiff(pat_tot, clust_tab[,1]) #patients with truncated data
+    tr_pat_ch = pat_ch[tr_pat,] #characteristics of patients with truncated data
+    tr_pat_ch$Y = tr_pat_ch[,2]+i #Year they turned i
     
+    #Identifying the types of truncated data
+    D_pat = tr_pat_ch[tr_pat_ch[,4]>tr_pat_ch[,3],1] #deceased patients
+    S_pat = tr_pat_ch[tr_pat_ch[,4]<2008,1] #patients aged 60 after 2008
+    E_pat = setdiff(tr_pat_ch[tr_pat_ch[,4]>2018,1], D_pat) #patients aged 60 before 2008
+    
+    #Adding patients with truncated data in the table of clusters ('clust_tab') 
     if(length(D_pat)!=0 | length(S_pat)!=0 | length(E_pat)!=0){
       
-      
+      #Deceased patients
       if(length(D_pat)!=0){
         clust_tab = rbind(clust_tab, data.frame(Patient = D_pat, cluster = "TT3"))
-        ex_ben = setdiff(ex_ben, D_pat)
+        tr_pat = setdiff(tr_pat, D_pat)
       }
       
+      #Patients aged 60 after 2008
       if(length(S_pat)!=0){
         clust_tab = rbind(clust_tab, data.frame(Patient = S_pat, cluster = "TT1"))
-        ex_ben = setdiff(ex_ben, S_pat)
+        tr_pat = setdiff(tr_pat, S_pat)
       }
       
+      #Patients aged 60 before 2008
       if(length(E_pat)!=0){
         clust_tab = rbind(clust_tab, data.frame(Patient = E_pat, cluster = "TT2"))
-        ex_ben = setdiff(ex_ben, E_pat)
+        tr_pat = setdiff(tr_pat, E_pat)
       }
       
-      clust_tab = rbind(clust_tab, data.frame(Patient = ex_ben, cluster = "0"))
+      #Patients with no prescription at age i
+      clust_tab = rbind(clust_tab, data.frame(Patient = tr_pat, cluster = "0")) 
       
       
     }else{
       
-      clust_tab = rbind(clust_tab, data.frame(Patient = ex_ben, cluster = "0"))
+      #Patients with no prescription at age i
+      clust_tab = rbind(clust_tab, data.frame(Patient = tr_pat, cluster = "0"))
       
     }
     
-    colnames(clust_tab)[2] = i #New name of cluster column
+    colnames(clust_tab)[2] = i
     
     if(i == age[1]){
-      res = clust_tab
+      allu_tab = clust_tab
     }else{
-      res = merge(res, clust_tab)
+      allu_tab = merge(allu_tab, clust_tab)
     }
   }
-  rownames(res) = res[,1]
-  return(res[,-1])
+  rownames(allu_tab) = allu_tab[,1]
+  return(allu_tab[,-1])
 }
 
 
@@ -94,6 +103,10 @@ alluvial = function(method, size){
 ##################################
 
 traj_simu = function(age, traj_clust, size, method){
+  
+  #age: follow-up period
+  #method: clustering strategy used
+  #size ["integer"]: limit size of clusters that will be displayed
   
   if(method == "Network-based"){
     tab_method = "B01_per_age/clust_simu_B01_"
