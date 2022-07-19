@@ -4,10 +4,11 @@
 
 alluvial = function(age, method, size){
   
-  #age: follow-up period 
-  #method: clustering strategy used
-  #size: limit size of clusters that will be displayed
+  #age ["integer vector"]: follow-up period 
+  #method ["character"]: clustering strategy used
+  #size ["integer"]: limit size of clusters that will be displayed
   
+  #selected method
   if(method == "Network-based"){
     tab_method = "net"
   }else{
@@ -21,7 +22,7 @@ alluvial = function(age, method, size){
   pat_tot = as.character(unique(unlist(pat_tot)))
   
   #Patient characteristics
-  pat_ch = read.csv("patient_simu.csv", sep = ";", header = TRUE, colClasses = c("character", NA, NA, NA))[, c(1,3,4)] #patient Ids + year of  birth + year of death
+  pat_ch = read.csv("Data/patient_characteristics.csv", sep = ";", header = TRUE, colClasses = c("character", NA, NA, NA))[, c(1,3,4)] #patient Ids + year of  birth + year of death
   rownames(pat_ch) = pat_ch[,1]
   pat_ch = pat_ch[pat_tot,] #Characteristics of selected patients
   pat_ch[,3] = ifelse(is.na(pat_ch[,3]), Inf, pat_ch[,3]) #replacing NA in year of death by Inf
@@ -72,13 +73,13 @@ alluvial = function(age, method, size){
         tr_pat = setdiff(tr_pat, E_pat)
       }
       
-      #Patients with no prescription at age i
+      #Patients without prescriptions at age i
       clust_tab = rbind(clust_tab, data.frame(Patient = tr_pat, cluster = "0")) 
       
       
     }else{
       
-      #Patients with no prescription at age i
+      #Patients without prescriptions at age i
       clust_tab = rbind(clust_tab, data.frame(Patient = tr_pat, cluster = "0"))
       
     }
@@ -96,144 +97,137 @@ alluvial = function(age, method, size){
 }
 
 
-
-
 ##################################
 # Cluster-trajectories flowchart #
 ##################################
 
-traj_simu = function(age, traj_clust, size, method){
+flowchart = function(age, size, method){
   
-  #age: follow-up period
-  #method: clustering strategy used
+  #age ["integer vector"]: follow-up period
+  #method ["character"]: clustering strategy used
   #size ["integer"]: limit size of clusters that will be displayed
   
-  if(method == "Network-based"){
-    tab_method = "B01_per_age/clust_simu_B01_"
-  }else{
-    tab_method = "B01_per_age/clustKM_simu_B01_"
-  }
+  #Table obtained from the alluvial function
+  allu_tab = allu_inter_simu(age, size, method)
   
-  #patient characteristics
-  pat = read.csv("patient_simu.csv", sep = ";", header = TRUE, colClasses = c("character", NA, NA, NA))[, c(1,2)] #we extract Id patient and sex
-  rownames(pat) = pat[,1]
-  #ald = read.csv("ALD2.csv", header = TRUE, sep = ";") #ALD
+  #Patient characteristics
+  pat_ch = read.csv("Data/patient_characteristics.csv", sep = ";", header = TRUE, colClasses = c("character", NA, NA, NA))[, c(1,2)] #patient ids + sex
+  rownames(pat_ch) = pat_ch[,1]
   
-  clust_tab1 = read.csv(paste0(tab_method, age[1], ".csv"), sep = ";", colClasses = c("character", NA))
-  isolate = names(which(table(clust_tab1[,2])<size))
-  if(length(isolate) != 0){
-    clust_tab1 = clust_tab1[-which(clust_tab1[,2] %in% isolate),]
-  }
-  
-  #We order name cluster from 1, the bigger cluster to the last, the smaller
-  id_ord = names(sort(table(clust_tab1[,2]), decreasing = TRUE)) #cluster names ordered by size
-  clust_tab1[,2] = as.character(factor(clust_tab1[,2], id_ord, 1:length(id_ord))) #renaming
-  
-  num_clust1 = paste0(age[1], ".", unique(clust_tab1[,2]))
-  ben1 = lapply(unique(clust_tab1[,2]), function(x,tab)tab[tab[,2]==x,1], clust_tab1) #we get all patient id per cluster -> return a list 
-  names(ben1) = num_clust1
-  
-  #Table of prescription
-  pres_tab1 = read.csv(paste0("B01_per_age/pres_simu_B01_age_", age[1], ".csv"), sep = ";", check.names = FALSE)
-  
-  #Sex ratio
-  SR1 = unlist(lapply(ben1, function(x){
-    return(round(mean(pat[x,2]==1),2))
-  }))
-  names(SR1) = num_clust1
-  
-  for(i in age[-1]){
-    clust_tab2 = read.csv(paste0(tab_method, i, ".csv"), sep = ";", colClasses = c("character", NA))
-    isolate = names(which(table(clust_tab2[,2])<size))
-    if(length(isolate) != 0){
-      clust_tab2 = clust_tab2[-which(clust_tab2[,2] %in% isolate),]
-    }
+  for(i in head(age, -1)){
+    clust_label = unique(allu_tab[,paste(i)]) #label of clusters at age i
+    clust_label = clust_label[-which(clust_label%in%c("TT1", "TT2", "TT3"))] #removing type of truncated data
+    pat_clust1 = lapply(clust_label, function(x,tab)rownames(tab)[which(tab[,paste(i)]%in%x)], allu_tab) #getting all patient ids per cluster at age i
+    clust_label = paste0(i, ".", clust_label) #adding age before the cluster label ("age.label")
+    names(pat_clust1) = clust_label
     
-    #We order name cluster from 1, the bigger cluster to the last, the smaller
-    id_ord = names(sort(table(clust_tab2[,2]), decreasing = TRUE)) #cluster names ordered by size
-    clust_tab2[,2] = as.character(factor(clust_tab2[,2], id_ord, 1:length(id_ord))) #renaming
+    clust_label = unique(allu_tab[,paste(i+1)]) #label of clusters at age i+1
+    clust_label = clust_label[-which(clust_label%in%c("TT1", "TT2", "TT3"))] #removing type of truncated data
+    pat_clust2 = lapply(clust_label, function(x,tab)rownames(tab)[which(tab[,paste(i+1)]%in%x)], allu_tab) #getting all patient ids per cluster at age i+1
+    clust_label = paste0(i+1, ".", clust_label) #adding age before the cluster label ("age.label")
+    names(pat_clust2) = clust_label
     
-    #We add patient in cluster 0 identified from allu_inter function
-    clust_tab2 = rbind(clust_tab2, data.frame(Patient = rownames(traj_clust)[traj_clust[,paste(i)]=="0"], cluster = 0))
+    #Tables of prescriptions
+    pres_tab1 = read.csv(paste0("Data/pres_", i, ".csv"), sep = ";", check.names = FALSE) #at age i
+    pres_tab2 = read.csv(paste0("Data/pres_", i+1, ".csv"), sep = ";", check.names = FALSE) #at age i+1
     
-    num_clust2 = paste0(i, ".", unique(clust_tab2[,2]))
-    ben2 = lapply(unique(clust_tab2[,2]), function(x,tab)tab[tab[,2]==x,1], clust_tab2)
-    names(ben2) = num_clust2
+    #Combinations of clusters at age i and i+1
+    pat_combi = expand.grid(pat_clust1,pat_clust2)
     
-    #Table of prescription
-    pres_tab2 = read.csv(paste0("B01_per_age/pres_simu_B01_age_", i, ".csv"), sep = ";", check.names = FALSE)
+    #Name of clusters associated to combinations of clusters
+    name_combi = expand.grid(names(pat_clust1),names(pat_clust2))
     
-    #Sex ratio
-    SR2 = unlist(lapply(ben2, function(x){
-      return(round(mean(pat[x,2]==1),2))
-    }))
-    names(SR2) = num_clust2
-    
-    #combination of clusters t and t+1 to compute similarity between them
-    ben_pair = expand.grid(ben1,ben2)
-    
-    #combination of name of cluster associated (name cluster = age.numberOfCluster)
-    name_pair = expand.grid(num_clust1,num_clust2)
-    
-    #Jaccard index calculation between consecutive cluster
-    name_pair$nbpat = apply(ben_pair, 1, function(x){
+    #Computing the number of common patients between all combinations of clusters at age i and i+1
+    name_combi$nbpat = apply(pat_combi, 1, function(x){
       length(intersect(x[[1]], x[[2]]))
     })
+    name_combi = name_combi[name_combi[,3]>0,] #number of common patients > 0
     
-    #Keep only cluster couples with Jaccard index >0
-    name_pair = name_pair[name_pair[,3]>0,]
-    name_pair = name_pair %>% group_by(Var1) %>%
+    #For each cluster at age i, we keep the cluster at age i+1 with which it has the greatest number of common patients
+    name_combi = name_combi %>% group_by(Var1) %>%
       filter(nbpat >= max(nbpat))
-    name_pair = name_pair[order(name_pair[,3], decreasing = TRUE),]
-    name_pair = as.data.frame(name_pair)
-    name_pair[,1] = as.character(name_pair[,1])
-    name_pair[,2] = as.character(name_pair[,2])
+    name_combi = name_combi[order(name_combi[,3], decreasing = TRUE),] #ordering table from the greatest to the smallest number of common patients 
+    name_combi = as.data.frame(name_combi)
+    name_combi[,1] = as.character(name_combi[,1])
+    name_combi[,2] = as.character(name_combi[,2])
     
-    top_pres = lapply(unique(c(name_pair[,1], name_pair[,2])), function(x){
+    #Sex ratio in each cluster of age i
+    SR1 = unlist(lapply(pat_clust1, function(x){
+      return(round(mean(pat_ch[x,2]==1),2))
+    }))
+    
+    #Sex ratio in each cluster of age i+1
+    SR2 = unlist(lapply(pat_clust2, function(x){
+      return(round(mean(pat_ch[x,2]==1),2))
+    }))
+    
+    #Characterizing each clusters at age i and i+1 with the two most prescribed drugs, the sex ratio and  the total number of patients 
+    cluster_cha = lapply(unique(c(name_combi[,1], name_combi[,2])), function(x){
       if(substr(x, 1, 2)==i){
+        
+        #characterizing clusters at age i
         if(gsub("^.{3}", "", x)=="0"){
-          res = paste0(x, "[", x, "<br> SR=", SR2[x], "<br> n=", nrow(clust_tab2[clust_tab2[,2]=="0",]), "]")
+          #cluster containing patients without prescriptions
+          res = paste0(x, "[", x, " <br> SR=", SR1[x], " <br> n=", length(pat_clust1[[x]]), "]")
         }else{
-          pat_clust = clust_tab2[clust_tab2[,2]==gsub("^.{3}", "", x),1]
-          pres_clust = pres_tab2[pat_clust,]
-          top = round(sort(colMeans(pres_clust!=0),decreasing = TRUE)[1:2],2)
-          res = paste0(x, "[", x, " <br> ", names(top[1]), " : ", top[1], " <br> ", names(top[2]), " : ", top[2], "<br> n=", length(pat_clust), "]")
+          pres_clust = pres_tab1[pat_clust1[[x]],] #prescriptions of patients belonging to the cluster x
+          top_pres = round(sort(colMeans(pres_clust!=0),decreasing = TRUE)[1:2],2) #the two most prescribed drugs in cluster x
+          res = paste0(x, "[", x, " <br> ", names(top_pres[1]), " : ", top_pres[1], " <br> ", names(top_pres[2]), " : ", top_pres[2], " <br> SR=", SR1[x], " <br> n=", length(pat_clust1[[x]]), "]")
         }
+        
       }else{
+        
+        #characterizing clusters at age i+1
         if(gsub("^.{3}", "", x)=="0"){
-          res = paste0(x, "[", x, "<br> SR=", SR1[x], "<br> n=", nrow(clust_tab1[clust_tab1[,2]=="0",]), "]")
+          #cluster containing patients without prescriptions
+          res = paste0(x, "[", x, " <br> SR=", SR2[x], " <br> n=", length(pat_clust2[[x]]), "]")
         }else{
-          pat_clust = clust_tab1[clust_tab1[,2]==gsub("^.{3}", "", x),1]
-          pres_clust = pres_tab1[pat_clust,]
-          top = round(sort(colMeans(pres_clust!=0),decreasing = TRUE)[1:2],2)
-          res = paste0(x, "[", x, " <br> ", names(top[1]), " : ", top[1], " <br> ", names(top[2]), " : ", top[2], "<br> SR=", SR1[x], "<br> n=", length(pat_clust), "]")
+          pres_clust = pres_tab2[pat_clust2[[x]],] #prescriptions of patients belonging to the cluster x
+          top_pres = round(sort(colMeans(pres_clust!=0),decreasing = TRUE)[1:2],2) #the two most prescribed drugs in cluster x
+          res = paste0(x, "[", x, " <br> ", names(top_pres[1]), " : ", top_pres[1], " <br> ", names(top_pres[2]), " : ", top_pres[2], " <br> SR=", SR2[x], " <br> n=", length(pat_clust2[[x]]), "]")
         }
+        
       }
       return(res)
     })
-    names(top_pres) = unique(c(name_pair[,1], name_pair[,2]))
+    names(cluster_cha) = unique(c(name_combi[,1], name_combi[,2]))
     
-    trj = apply(name_pair, 1, function(x){
-      return(paste0(top_pres[[ x[1] ]], " --> |", x[3], "|", top_pres[[ x[2] ]]))
+    #cluster-trajectories
+    traj = apply(name_combi, 1, function(x){
+      return(paste0(cluster_cha[[ x[1] ]], " --> |", x[3], "|", cluster_cha[[ x[2] ]]))
     })
     
-    
-    ben1 = ben2
-    num_clust1 = num_clust2
-    clust_tab1 = clust_tab2
-    pres_tab1 = pres_tab2
-    SR1 = SR2
-    
-    if(i == age[2]){
-      res = trj
-      link = name_pair[,3] #edge weights
+    if(i == age[1]){
+      clust_traj = traj
+      link = name_combi[,3] #defining arrows in flowchart by the number of common patients
     }else{
-      res = append(res, trj)
-      link = append(link, name_pair[,3])
+      clust_traj = append(clust_traj, traj)
+      link = append(link, name_combi[,3])
     }
   }
-  link = pixedge(link)
+  
+  #Arrow thickness
+  link = pixlink(link)
   link = paste0("linkStyle ", 0:(length(link)-1), " stroke-width:", link)
-  res = paste(c(res,link), collapse = ";")
-  return(paste("graph LR; linkStyle default interpolate basis", res, sep = ";"))
+  
+  clust_traj = paste(c(clust_traj,link), collapse = ";")
+  
+  return(paste("graph LR; linkStyle default interpolate basis", clust_traj, sep = ";"))
+}
+
+#####################################
+# Arrow thickness of the flowchart #
+#####################################
+
+pixlink = function(x){
+  #x ["integer vector"]: number of common patients associated to all arrows in the flowchart
+  
+  a = min(x) 
+  b = max(x)
+  
+  #Conversion of the number of common patients in pixels
+  pix = lapply(x, function(x){
+    round(( ((x-a) * (5-0.4)) / (b-a) ) + 0.4, 2)
+  })
+  return(unlist(pix))
 }
