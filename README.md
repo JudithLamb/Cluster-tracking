@@ -27,11 +27,11 @@ cos_DF.to_parquet("Data/cosine_60.gzip", compression="gzip")
 
 We then filtered the similaritry matrices according to a threshold. This threshold is chosen in order to reduce the number of edges in the networks while obtaining a minimum number of isolated patients. From the matrices constructed with the simulated sample, we choose a threshold of 0.7 because this is the threshold for which we observe the fastest decrease in the number of edges and there is only a small number of isolated patients (see figure below). 
 
-![example visualization](Figure/cosine_threshold.png)
+![example visualization](Figures/cosine_threshold.png)
 
 From each filtered matrix, we obtained a patient network in which patients are connected only if they have a Cosine similarity $\ge 0.7$. The patient network containing 60-year-old patients is represented in the figure below.
 
-![example visualization](Figure/network_60.png)
+![example visualization](Figures/network_60.png)
 
 ### Clustering patient networks
 We applied the Markov Cluster algorithm (MCL) on the largest connected component of each patient network constructed.
@@ -84,7 +84,7 @@ clust_data.to_csv("Data/clusters_net_60.csv", sep = ";", index = False)
 ## Identifying clusters of patients from raw data
 The second clustering strategy used to identify clusters of patients relies on raw data. We used Kmeans that we applied directly on raw data, for each patient age. As in Kmeans the number of clusters must be specified *a priori*, we determined the optimal number of clusters per age by calculating the silhouette score. We varied the number of clusters from 2 to 200. The optimal number of clusters $K$ identified at each age from the simulated sample is represented in the figure below. 
 
-![example visualization](Figure/silhouette_raw.png)
+![example visualization](Figures/silhouette_raw.png)
 
 We can therefore apply Kmeans at each age with the optimal number of clusters identified.
 
@@ -114,7 +114,7 @@ We identified sets of clusters per age either from patient networks with MCL or 
 ## R Shiny app
 To visualize the tracking of clusters and the cluster-trajectories from the simulated data, we developped an R Shiny app. The tracking of clusters is visualized using an alluvial plot, in which the blocks represent the clusters and the stream fields between the blocks represent the number of common patients. The cluster-trajectories are visualized using a flowchart composed of blocks representing the clusters. The arrow thickness between the blocks represents the number of common patients. All clusters displayed in the flowchart are characterized by the two most prescribed drugs (name, percentage of patients receiving the drug), the sex ratio (SR) and the total number of patients (n). These clusters are named with the age at which it was identified and its label (age.label).
 
-![example visualization](Figure/shiny_prog.png)
+![example visualization](Figures/shiny_prog.png)
 
 This R shiny app allows to choose between the two clustering strategies and to display clusters greater than or equal to the selected limit size. The following code should be executed in R to launch the application.
 
