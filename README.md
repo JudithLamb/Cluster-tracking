@@ -113,6 +113,8 @@ We identified sets of clusters per age either from patient networks with MCL or 
 
 To visualize the tracking of clusters and the cluster-trajectories from the simulated data, we developped an R Shiny app. This R shiny app allows to select between the two clustering strategies and to display clusters greater than  The tracking of clusters is visualized using an alluvial plot, in which the blocks represent the clusters and the stream fields between the blocks represent the number of common patients. The cluster-trajectories are visualized using a flowchart composed of blocks representing the clusters. The arrow thickness between the blocks represents the number of common patients. All clusters displayed in the flowchart are characterized by the two most prescribed drugs (name, percentage of patients receiving the drug), the sex ratio (SR) and the total number of patients (n). These clusters are named with the age at which it was identified and its label (age.label).
 
+![example visualization](Data/shiny_prog.png)
+
 ```R
 library(shiny)
 
