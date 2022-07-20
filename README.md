@@ -116,7 +116,7 @@ To visualize the tracking of clusters and the cluster-trajectories from the simu
 
 ![example visualization](Figure/shiny_prog.png)
 
-This R shiny app allows to choose between the two clustering strategies and to display clusters greater than or equal to the selected limit size. The following code should be executed in R to launch the application:
+This R shiny app allows to choose between the two clustering strategies and to display clusters greater than or equal to the selected limit size. The following code should be executed in R to launch the application.
 
 ```{r}
 library(shiny)
