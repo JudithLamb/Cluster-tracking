@@ -31,7 +31,7 @@ ui <- fluidPage(
     selectInput("method", "Clustering strategy", c("Network-based", "Raw-data-based"), "Network-based"),
     
     #cluster size selection
-    sliderInput("size", "Limit cluster size", 0, 100 , 30, 10),
+    sliderInput("size", "Cluster limit size", 0, 100 , 30, 10),
     
     hr(),
     
