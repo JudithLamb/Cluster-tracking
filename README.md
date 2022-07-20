@@ -1,5 +1,5 @@
 # Cluster-tracking approach
-We propose novel approaches based on cluster-tracking for clustering patients from longitudinal data extracted from medico-administrative databases. These approaches start by identifying clusters of patients at each considered age. To this goal, we used two different clustering strategies: Markov Cluster algorithm (MCL) applied on patient networks built from raw data and Kmeans applied directly on raw data. Clusters are then tracked over ages to define cluster-trajectories. We applied our approaches to the analysis of antithrombotic drug prescriptions (i.e., raw data) extracted from the Echantillon Généraliste des Bénéficiaires (EGB, a French cohort) between 2008 and 2018 in patients aged from 60 to 70 years old. From this data, we simulated 5594 patients with their drug prescriptions. This simulated sample is used in the following to apply our two cluster-tracking approaches.
+We propose two novel approaches based on cluster-tracking for clustering patients from longitudinal data extracted from medico-administrative databases. These approaches start by identifying clusters of patients at each considered age. To this goal, we used two different clustering strategies: Markov Cluster algorithm (MCL) applied on patient networks built from raw data and Kmeans applied directly on raw data. Clusters are then tracked over ages to define cluster-trajectories. We applied our approaches to the analysis of antithrombotic drug prescriptions extracted from the Echantillon Généraliste des Bénéficiaires (EGB, a French cohort) between 2008 and 2018 in patients aged from 60 to 70 years old. For privacy reasons, this raw dataset cannot be shared publicly. Hence, from this raw dataset, we created a simulated dataset of 5594 patients with their drug prescriptions. This simulated sample dataset is used in the following to apply our two cluster-tracking approaches.
 
 ## Identifying clusters of patients from patient networks
 The first clustering strategy used to identify clusters of patients relies on the construction of patient networks. We started by constructing a patient network for each age considered. We then applied the MCL clustering algorithm on each network.
@@ -25,11 +25,11 @@ cos_DF = pd.DataFrame(cosine_similarity(pres_tab),
 cos_DF.to_parquet("Data/cosine_60.gzip", compression="gzip")  
 ```
 
-We then filtered the similaritry matrices according to a threshold. This threshold is chosen over all the matrices in order to reduce the number of edges in the networks while obtaining a minimum number of isolated patients. From the matrices constructed with the simulated sample, we choose a threshold of 0.7 because this is where we observe the fastest decrease in the number of edges and there is only a small number of isolated patients (see figure below). 
+We then filtered the similaritry matrices according to a threshold. This threshold is chosen in order to reduce the number of edges in the networks while obtaining a minimum number of isolated patients. From the matrices constructed with the simulated sample, we choose a threshold of 0.7 because this is the threshold for which we observe the fastest decrease in the number of edges and there is only a small number of isolated patients (see figure below). 
 
 ![example visualization](Figure/cosine_threshold.png)
 
-From each filtered matrix, we obtained a patient network in which patients are connected only if they have a Cosine similarity $\ge 0.7$. The patient network at 60 years of age is represented in the figure below.
+From each filtered matrix, we obtained a patient network in which patients are connected only if they have a Cosine similarity $\ge 0.7$. The patient network containing 60 years old patients is represented in the figure below.
 
 ![example visualization](Figure/network_60.png)
 
@@ -109,7 +109,7 @@ clust_data.to_csv("Data/clusters_raw_60.csv" , sep = ";", index = False)
 ```
 
 ## Tracking clusters over ages
-We identified sets of clusters per age either from patient networks with MCL or from raw data with Kmeans. We then intend to follow the clusters over the different ages. To this goal, we computed the number of common patients between every pair of clusters obtained at 2 consecutive ages. By considering only the greatest number of common patients between all consecutive clusters, we were able to identify sets of successive clusters that we called cluster-trajectories.
+We identified sets of clusters per age either from patient networks with MCL or from raw data with Kmeans. We then intend to follow the clusters over the different ages. To this goal, we computed the number of common patients between every pair of clusters obtained at 2 consecutive ages. By considering only the largest number of common patients between all consecutive clusters, we were able to identify sets of successive clusters that we called cluster-trajectories.
 
 ## R Shiny app
 To visualize the tracking of clusters and the cluster-trajectories from the simulated data, we developped an R Shiny app. The tracking of clusters is visualized using an alluvial plot, in which the blocks represent the clusters and the stream fields between the blocks represent the number of common patients. The cluster-trajectories are visualized using a flowchart composed of blocks representing the clusters. The arrow thickness between the blocks represents the number of common patients. All clusters displayed in the flowchart are characterized by the two most prescribed drugs (name, percentage of patients receiving the drug), the sex ratio (SR) and the total number of patients (n). These clusters are named with the age at which it was identified and its label (age.label).
