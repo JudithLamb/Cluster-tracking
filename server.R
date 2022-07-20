@@ -15,7 +15,7 @@ library(parcats)
 #############
 
 
-# Interactive alluvial plot 
+# Interactive alluvial plot
 ###########################
 
 alluvial <- function(age, method, size){
