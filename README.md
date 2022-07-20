@@ -119,7 +119,7 @@ This R shiny app allows to choose between the two clustering strategies and to d
 
 
 
-```R
+```{r}
 library(shiny)
 
 runGitHub("Cluster-tracking", "JudithLamb")
