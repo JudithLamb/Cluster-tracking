@@ -2,7 +2,7 @@
 We propose two novel approaches based on cluster-tracking for clustering patients from longitudinal data extracted from medico-administrative databases. These approaches start by identifying clusters of patients at each considered age. To this goal, we used two different clustering strategies: Markov Cluster algorithm (MCL) applied on patient networks built from raw data and Kmeans applied directly on raw data. Clusters are then tracked over ages to define cluster-trajectories. We applied our approaches to the analysis of antithrombotic drug prescriptions extracted from the Echantillon Généraliste des Bénéficiaires (EGB, a French cohort) between 2008 and 2018 in patients aged from 60 to 70 years old. For privacy reasons, this raw dataset cannot be shared publicly. Hence, from this raw dataset, we created a simulated dataset of 5594 patients with their drug prescriptions. This simulated sample dataset is used in the following to apply our two cluster-tracking approaches.
 
 ## Identifying clusters of patients from patient networks
-The first clustering strategy used to identify clusters of patients relies on the construction of patient networks. We started by constructing a patient network for each age considered. We then applied the MCL clustering algorithm on each network.
+The first clustering strategy used to identify clusters of patients relies on the construction of patient networks. We started by constructing a patient network for each age considered. We then applied the MCL clustering algorithm on each network [[1]](#1).
 
 ### Constructing patient networks
 A patient network is a graph $G = (V,E)$ with $V$ patient nodes and $E$ edges representing interactions between patient nodes. We built a network for each patient age. Each network is constructed using a similarity matrix. In this similarity matrix, we computed the similarity between patients of the same age using the Cosine similarity.
@@ -123,3 +123,7 @@ library(shiny)
 
 runGitHub("Cluster-tracking", "JudithLamb")
 ```
+
+## References
+<a id="1">[1]</a> 
+Santo Fortunato. “Community detection in graphs”. In: Physics reports 486.3-5 (2010), pp. 75–174.
