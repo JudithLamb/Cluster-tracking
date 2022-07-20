@@ -108,7 +108,7 @@ flowchart <- function(age, method, size){
   #size ["integer"]: limit size of clusters that will be displayed
   
   #Table obtained from the alluvial function
-  allu_tab <- allu_inter_simu(age, size, method)
+  allu_tab <- alluvial(age, size, method)
   
   #Patient characteristics
   pat_ch <- read.csv("Data/patient_characteristics.csv", sep = ";", header = TRUE, colClasses = c("character", NA, NA, NA))[, c(1,2)] #patient ids + sex
