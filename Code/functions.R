@@ -29,7 +29,7 @@ alluvial <- function(age, method, size){
   
   for(i in age){
     #Clusters identified at age i with the selected 'method'
-    clust_tab <- read.csv(paste0("Data/clusters_", tab_method, "_", x, ".csv"), sep = ";", colClasses = c("character", NA))
+    clust_tab <- read.csv(paste0("Data/clusters_", tab_method, "_", i, ".csv"), sep = ";", colClasses = c("character", NA))
     
     #Keep only clusters >= 'size'
     isolate <- names(which(table(clust_tab[,2])<size))
