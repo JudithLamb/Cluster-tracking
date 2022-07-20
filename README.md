@@ -111,13 +111,11 @@ clust_data.to_csv("Data/clusters_raw_60.csv" , sep = ";", index = False)
 ## Tracking clusters over ages
 We identified sets of clusters per age either from patient networks with MCL or from raw data with Kmeans. We then intend to follow the clusters over the different ages. To this goal, we computed the number of common patients between every pair of clusters obtained at 2 consecutive ages. By considering only the greatest number of common patients between all consecutive clusters, we were able to identify sets of successive clusters that we called cluster-trajectories.
 
-To visualize the tracking of clusters and the cluster-trajectories from the simulated data, we developped an R Shiny app. 
+To visualize the tracking of clusters and the cluster-trajectories from the simulated data, we developped an R Shiny app. The tracking of clusters is visualized using an alluvial plot, in which the blocks represent the clusters and the stream fields between the blocks represent the number of common patients. The cluster-trajectories are visualized using a flowchart composed of blocks representing the clusters. The arrow thickness between the blocks represents the number of common patients. All clusters displayed in the flowchart are characterized by the two most prescribed drugs (name, percentage of patients receiving the drug), the sex ratio (SR) and the total number of patients (n). These clusters are named with the age at which it was identified and its label (age.label).
 
 ![example visualization](Figure/shiny_prog.png)
 
-This R shiny app allows to choose between the two clustering strategies and to display clusters greater than or equal to the selected limit size.  The tracking of clusters is visualized using an alluvial plot, in which the blocks represent the clusters and the stream fields between the blocks represent the number of common patients.  The cluster-trajectories are visualized using a flowchart composed of blocks representing the clusters. The arrow thickness between the blocks represents the number of common patients. All clusters displayed in the flowchart are characterized by the two most prescribed drugs (name, percentage of patients receiving the drug), the sex ratio (SR) and the total number of patients (n). These clusters are named with the age at which it was identified and its label (age.label).
-
-
+This R shiny app allows to choose between the two clustering strategies and to display clusters greater than or equal to the selected limit size. The following code should be executed in R to launch the application:
 
 ```{r}
 library(shiny)
