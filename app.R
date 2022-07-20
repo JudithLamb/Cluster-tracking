@@ -5,10 +5,12 @@
 if(!requireNamespace("easyalluvial", quietly = TRUE)) install.packages("easyalluvial")
 if(!requireNamespace("DiagrammeR", quietly = TRUE)) install.packages("DiagrammeR")
 if(!requireNamespace("parcats", quietly = TRUE)) install.packages("parcats")
+if(!requireNamespace("dplyr", quietly = TRUE)) install.packages("dplyr")
 
 library(easyalluvial)
 library(DiagrammeR)
 library(parcats)
+library(dplyr)
 
 ##################
 # Functions file #
