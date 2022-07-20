@@ -10,9 +10,9 @@ library(easyalluvial)
 library(DiagrammeR)
 library(parcats)
 
-#############
-# Functions #
-#############
+##################
+# Functions file #
+##################
 
 source("Code/functions.R")
 
