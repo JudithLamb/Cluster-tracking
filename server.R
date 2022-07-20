@@ -9,6 +9,7 @@ if(!requireNamespace("parcats", quietly = TRUE)) install.packages("parcats")
 library(easyalluvial)
 library(DiagrammeR)
 library(parcats)
+library(shiny)
 
 #############
 # Functions #
