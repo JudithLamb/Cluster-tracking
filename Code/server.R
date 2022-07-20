@@ -14,7 +14,7 @@ library(parcats)
 # Functions file #
 ##################
 
-source("Code/functions.R")
+source("functions.R")
 
 ###########################
 # User Interface of Shiny #
