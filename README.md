@@ -39,8 +39,8 @@ We applied the Markov Cluster algorithm (MCL) on the largest connected component
 ```python
 import pandas as pd
 import numpy as np
-import networkx as nx
-import markov_clustering as mc
+import networkx as nx #version 2.3
+import markov_clustering as mc #version 0.0.6.dev0
 
 #Similarity matrix at age 60
 cos_tab = pd.read_parquet("Data/cosine_60.gzip")
