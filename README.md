@@ -9,7 +9,7 @@ A patient network is a graph $G = (V,E)$ with $V$ patient nodes and $E$ edges re
 
 ```python
 import pandas as pd
-from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.metrics.pairwise import cosine_similarity #version 0.24.1 of sklearn
 
 #Construction of the similarity matrix at age 60
 
@@ -90,7 +90,7 @@ We can therefore apply Kmeans at each age with the optimal number of clusters id
 
 ```python
 import pandas as pd
-from sklearn.cluster import KMeans
+from sklearn.cluster import KMeans #version 0.24.1 of sklearn
 
 #Table of prescriptions at age 60
 pres_tab = pd.read_csv("Data/pres_60.csv", sep = ";")
