@@ -98,7 +98,7 @@ pres_tab = pd.read_csv("Data/pres_60.csv", sep = ";")
 #Kmeans applied with 6 clusters, the optimal number of cluster identified at age 60
 KM = KMeans(n_clusters=6).fit(pres_tab.values)
 label = KM.labels_
-id_label = pres_tab.indexm
+id_label = pres_tab.index
 res = []
 for j in np.arange(len(label)) :
         res.append([id_label[j], label[j]+1]) #Patient ids + cluster they belong
