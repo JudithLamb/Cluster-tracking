@@ -64,7 +64,7 @@ clust = mc.get_clusters(mcl) #list of identified clusters
 pat = list(G.nodes()) #Patient IDs
 res = []
 for y in np.arange(len(clust)):
-    for j in clust[y] :
+    for j in clust[y]:
         res.append([pat[j], y+1]) #Patient ids + cluster they belong to
 
 #Extraction of clusters from the other connected components: each connected component represent a cluster
@@ -100,7 +100,7 @@ KM = KMeans(n_clusters=6).fit(pres_tab.values)
 label = KM.labels_
 id_label = pres_tab.index
 res = []
-for j in np.arange(len(label)) :
+for j in np.arange(len(label)):
         res.append([id_label[j], label[j]+1]) #Patient ids + cluster they belong
 clust_data = pd.DataFrame(res, columns=['Patient', 'cluster'])
 
