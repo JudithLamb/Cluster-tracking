@@ -8,7 +8,7 @@ The first clustering strategy used to identify clusters of patients relies on th
 A patient network is a graph $G = (V,E)$ with $V$ patient nodes and $E$ edges representing interactions between patient nodes. We built a network for each patient age. Each network is constructed using a similarity matrix. In this similarity matrix, we computed the similarity between patients of the same age using the Cosine similarity.
 
 ```python
-import pandas as pd
+import pandas as pd #version 1.2.0
 from sklearn.metrics.pairwise import cosine_similarity #version 0.24.1 of sklearn
 
 #Construction of the similarity matrix at age 60
@@ -37,8 +37,8 @@ From each filtered matrix, we obtained a patient network in which patients are c
 We applied the Markov Cluster algorithm (MCL) on the largest connected component of each patient network constructed.
 
 ```python
-import pandas as pd
-import numpy as np
+import pandas as pd #version 1.2.0
+import numpy as np #version 1.21.4
 import networkx as nx #version 2.3
 import markov_clustering as mc #version 0.0.6.dev0
 
@@ -89,7 +89,7 @@ The second clustering strategy used to identify clusters of patients relies on r
 We can therefore apply Kmeans at each age with the optimal number of clusters identified.
 
 ```python
-import pandas as pd
+import pandas as pd #version 1.2.0
 from sklearn.cluster import KMeans #version 0.24.1 of sklearn
 
 #Table of prescriptions at age 60
@@ -101,7 +101,7 @@ label = KM.labels_
 id_label = pres_tab.index
 res = []
 for j in np.arange(len(label)):
-        res.append([id_label[j], label[j]+1]) #Patient ids + cluster they belong
+    res.append([id_label[j], label[j]+1]) #Patient ids + cluster they belong
 clust_data = pd.DataFrame(res, columns=['Patient', 'cluster'])
 
 #Save
