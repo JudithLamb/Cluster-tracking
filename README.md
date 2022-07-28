@@ -1,5 +1,5 @@
 # Cluster-tracking approach
-We propose two novel approaches based on cluster-tracking for clustering patients from longitudinal data extracted from medico-administrative databases. These approaches start by identifying clusters of patients at each considered age. To this goal, we used two different clustering strategies: Markov Cluster algorithm (MCL) applied on patient networks built from raw data and Kmeans applied directly on raw data. Clusters are then tracked over ages to define cluster-trajectories. We applied our approaches to the analysis of antithrombotic drug prescriptions extracted from the Echantillon Généraliste des Bénéficiaires (EGB, a French cohort) between 2008 and 2018 in patients aged from 60 to 70 years old. For privacy reasons, this raw dataset cannot be shared publicly. Hence, from this raw dataset, we created a simulated dataset of 5594 patients with their drug prescriptions. This simulated sample dataset is used in the following to apply our two cluster-tracking approaches.
+We propose two novel approaches based on cluster-tracking for clustering patients from longitudinal data extracted from medico-administrative databases. These approaches start by identifying clusters of patients at each considered age. To this goal, we used two different clustering strategies: the Markov Cluster algorithm (MCL) applied to patient networks built from raw data and Kmeans applied directly to raw data. Clusters are then tracked over ages to define cluster-trajectories. We applied our approaches to the analysis of antithrombotic drug prescriptions extracted from the Echantillon Généraliste des Bénéficiaires (EGB, a French cohort) between 2008 and 2018 in patients aged from 60 to 70 years old. For privacy reasons, this raw dataset cannot be shared publicly. Hence, from this raw dataset, we created a simulated dataset of 5594 patients with their drug prescriptions. This simulated sample dataset is used in the following to apply our two cluster-tracking approaches.
 
 ## Identifying clusters of patients from patient networks
 The first clustering strategy used to identify clusters of patients relies on the construction of patient networks. We started by constructing a patient network for each age considered. We then applied the MCL clustering algorithm on each network [[1]](#1).
@@ -57,7 +57,7 @@ Gcc2 = sorted(nx.connected_components(G), key = len, reverse = True)[1:] #The ot
 #Largest connected component network
 G = G.subgraph(Gcc1) 
 
-#Exctraction of clusters from MCL algorithm applied on the largest connected component network
+#Exctraction of clusters from MCL algorithm applied to the largest connected component network
 mat = nx.to_scipy_sparse_matrix(G)
 mcl = mc.run_mcl(mat) 
 clust = mc.get_clusters(mcl) #list of identified clusters
@@ -82,7 +82,7 @@ clust_data.to_csv("Data/clusters_net_60.csv", sep = ";", index = False)
 ```
 
 ## Identifying clusters of patients from raw data
-The second clustering strategy used to identify clusters of patients relies on raw data. We used Kmeans that we applied directly on raw data, for each patient age. As in Kmeans the number of clusters must be specified *a priori*, we determined the optimal number of clusters per age by calculating the silhouette score. We varied the number of clusters from 2 to 200. The optimal number of clusters $K$ identified at each age from the simulated sample is represented in the figure below. 
+The second clustering strategy used to identify clusters of patients relies on raw data. We used Kmeans that we applied directly to raw data, for each patient age. As in Kmeans the number of clusters must be specified *a priori*, we determined the optimal number of clusters per age by calculating the silhouette score. We varied the number of clusters from 2 to 200. The optimal number of clusters $K$ identified at each age from the simulated sample is represented in the figure below. 
 
 ![example visualization](Figures/silhouette_raw.png)
 
