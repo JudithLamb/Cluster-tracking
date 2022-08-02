@@ -3,7 +3,13 @@
 #############
 
 if(!requireNamespace("easyalluvial", quietly = TRUE)) install.packages("easyalluvial")
-if(!requireNamespace("DiagrammeR", quietly = TRUE)) install.packages("DiagrammeR")
+if(!requireNamespace("DiagrammeR", quietly = TRUE)){
+  install.packages("https://cran.r-project.org/src/contrib/Archive/DiagrammeR/DiagrammeR_1.0.6.1.tar.gz", repos=NULL, type = "source")
+}else{
+  if(packageVersion('DiagrammeR')!="1.0.6.1"){
+    install.packages("https://cran.r-project.org/src/contrib/Archive/DiagrammeR/DiagrammeR_1.0.6.1.tar.gz", repos=NULL, type = "source")
+  }
+}
 if(!requireNamespace("parcats", quietly = TRUE)) install.packages("parcats")
 if(!requireNamespace("dplyr", quietly = TRUE)) install.packages("dplyr")
 
