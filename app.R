@@ -18,23 +18,6 @@ library(dplyr)
 
 source("Code/functions.R")
 
-#####################################
-# Arrow thickness of the flowchart #
-#####################################
-
-pixlink <- function(x){
-  #x ["integer vector"]: number of common patients associated to all arrows in the flowchart
-  
-  a <- min(x) 
-  b <- max(x)
-  
-  #Conversion of the number of common patients in pixels
-  pix <- lapply(x, function(x){
-    round(( ((x-a) * (5-0.4)) / (b-a) ) + 0.4, 2)
-  })
-  return(unlist(pix))
-}
-
 ###########################
 # User Interface of Shiny #
 ###########################
