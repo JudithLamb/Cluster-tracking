@@ -146,8 +146,8 @@ flowchart <- function(age, method, size){
     #For each cluster at age i, we keep the cluster at age i+1 with which it has the greatest number of common patients
     name_combi <- name_combi %>% group_by(Var1) %>%
       filter(nbpat >= max(nbpat))
-    name_combi <- name_combi[order(name_combi[,3], decreasing = TRUE),] #ordering table from the greatest to the smallest number of common patients 
     name_combi <- as.data.frame(name_combi)
+    name_combi <- name_combi[order(name_combi[,3], decreasing = TRUE),] #ordering table from the greatest to the smallest number of common patients
     name_combi[,1] <- as.character(name_combi[,1])
     name_combi[,2] <- as.character(name_combi[,2])
     
