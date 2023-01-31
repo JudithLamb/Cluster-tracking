@@ -119,6 +119,7 @@ To visualize the tracking of clusters and the cluster-trajectories from the simu
 This R shiny app allows to choose between the two clustering strategies and to display clusters greater than or equal to the selected limit size. The following code should be executed in R to launch the application.
 
 ```{r}
+if(!requireNamespace("shiny", quietly = TRUE)) install.packages("shiny")
 library(shiny)
 
 runGitHub("Cluster-tracking", "JudithLamb")
