@@ -1,5 +1,5 @@
 # Cluster-tracking approach
-We propose two novel approaches based on cluster-tracking for clustering patients from longitudinal data extracted from medico-administrative databases. These approaches start by identifying clusters of patients at each considered age. To this goal, we used two different clustering strategies: the Markov Cluster algorithm (MCL) applied to patient networks built from raw data and Kmeans applied directly to raw data. Clusters are then tracked over ages to define cluster-trajectories. We applied our approaches to the analysis of antithrombotic drug prescriptions extracted from the Echantillon Généraliste des Bénéficiaires (EGB, a French cohort) between 2008 and 2018 in patients aged from 60 to 70 years old. For privacy reasons, this raw dataset cannot be shared publicly. Hence, from this raw dataset, we created a simulated dataset of 5594 patients with their drug prescriptions. This simulated sample dataset is used in the following to apply our two cluster-tracking approaches.
+We propose two novel approaches based on cluster-tracking for clustering patients from longitudinal data extracted from medico-administrative databases. These approaches start by identifying clusters of patients at each considered age. To this goal, we used two different clustering strategies: the Markov Cluster algorithm (MCL) applied to patient networks built from raw data and Kmeans applied directly to raw data. Clusters are then tracked over ages to define cluster-trajectories. We applied our approaches to the analysis of antithrombotic drug reimbursements extracted from the Echantillon Généraliste des Bénéficiaires (EGB, a French cohort) between 2008 and 2018 in patients aged from 60 to 70 years old. For privacy reasons, this raw dataset cannot be shared publicly. Hence, from this raw dataset, we created a simulated dataset of 5594 patients with their drug reimbursements. This simulated sample dataset is used in the following to apply our two cluster-tracking approaches.
 
 ## Identifying clusters of patients from patient networks
 The first clustering strategy used to identify clusters of patients relies on the construction of patient networks. We started by constructing a patient network for each age considered. We then applied the MCL clustering algorithm on each network [[1]](#1).
@@ -13,7 +13,7 @@ from sklearn.metrics.pairwise import cosine_similarity #version 0.24.1 of sklear
 
 #Construction of the similarity matrix at age 60
 
-#Table of prescriptions at age 60
+#Table of reimbursements at age 60
 pres_tab = pd.read_csv("Data/pres_60.csv", sep = ";")
 
 #Computation of the Cosine similarity between patients 
@@ -92,7 +92,7 @@ We can therefore apply Kmeans at each age with the optimal number of clusters id
 import pandas as pd #version 1.2.0
 from sklearn.cluster import KMeans #version 0.24.1 of sklearn
 
-#Table of prescriptions at age 60
+#Table of reimbursements at age 60
 pres_tab = pd.read_csv("Data/pres_60.csv", sep = ";")
 
 #Kmeans applied with 6 clusters, the optimal number of cluster identified at age 60
@@ -112,7 +112,7 @@ clust_data.to_csv("Data/clusters_raw_60.csv" , sep = ";", index = False)
 We identified sets of clusters per age either from patient networks with MCL or from raw data with Kmeans. We then intend to follow the clusters over the different ages. To this goal, we computed the number of common patients between every pair of clusters obtained at 2 consecutive ages. By considering only the largest number of common patients between all consecutive clusters, we were able to identify sets of successive clusters that we called cluster-trajectories.
 
 ## R Shiny app
-To visualize the tracking of clusters and the cluster-trajectories from the simulated data, we developped an R Shiny app. The tracking of clusters is visualized using an alluvial plot, in which the blocks represent the clusters and the stream fields between the blocks represent the number of common patients. The cluster-trajectories are visualized using a flowchart composed of blocks representing the clusters. The arrow thickness between the blocks represents the number of common patients. All clusters displayed in the flowchart are characterized by the two most prescribed drugs (name, percentage of patients receiving the drug), the sex ratio (SR) and the total number of patients (n). These clusters are named with the age at which it was identified and its label (age.label).
+To visualize the tracking of clusters and the cluster-trajectories from the simulated data, we developped an R Shiny app. The tracking of clusters is visualized using an alluvial plot, in which the blocks represent the clusters and the stream fields between the blocks represent the number of common patients. The cluster-trajectories are visualized using a flowchart composed of blocks representing the clusters. The arrow thickness between the blocks represents the number of common patients. All clusters displayed in the flowchart are characterized by the two most used drugs (name, percentage of patients receiving the drug), the sex ratio (SR) and the total number of patients (n). These clusters are named with the age at which it was identified and its label (age.label).
 
 ![example visualization](Figures/shiny_prog.png)
 
